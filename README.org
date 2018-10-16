@@ -1,0 +1,52 @@
+* Apresentaçã: Android Environment
+  Este container docker é um ambiente para programação de aplicativos
+  android pré-configurado com ferramentas de testes.
+  Todos os Dockerfiles são ou inpirados ou forks do projeto
+  https://github.com/fedora-cloud/Fedora-Dockerfiles
+
+* Instalação do ambiente
+  + Instalação do Docker
+     Será necessário primeiro instalar o docker[fn:installdocker]
+     
+     #+BEGIN_SRC sh :results output
+     docker -v
+     #+END_SRC
+
+     #+RESULTS:
+     : Docker version 1.13.1, build 9c9378f-unsupported
+     
+  + Instalação do git
+    Consulte esta documentação para instalação do git[fn:installgit]
+
+    #+BEGIN_SRC sh
+    git --version
+    #+END_SRC 
+
+    #+RESULTS:
+    : git version 2.14.4
+    
+  + Clonar este repositório        
+    #+BEGIN_SRC sh :results output
+      cd /home/$USER
+      git cl one https://github.com/wagnermarques/android_env.git
+    #+END_SRC    
+
+    #+RESULTS:
+
+* Criando a imagem dos containes
+  Poderia ser um container só, mas é uma boa prática dividi-los
+  fazendo um ambiente herdar do outro.
+  Por exemplo, tem um Dockerfile que cria uma imagem com interface
+  gráfica, outra que adiciona o java 8 da oracle a partir desse
+  ambiente sob esse último o container com o android studio.
+
+  + Criando as imagem do vnc
+    #+BEGIN_SRC 
+      cd /home/$USER/android_env/
+      cd 
+    #+END_SRC
+
+
+* Referencias
+[fn:installdocker]  https://docs.docker.com/install/linux/docker-ce/fedora/#set-up-the-repository
+[fn:installgit] https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
