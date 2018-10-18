@@ -1,8 +1,9 @@
-* Apresentaçã: Android Environment
-  Este container docker é um ambiente para programação de aplicativos
+* Apresentação do Projeto
+  O objetivo deste repostiório é criar um container para programação de aplicativos
   android pré-configurado com ferramentas de testes.
   Todos os Dockerfiles são ou inpirados ou forks do projeto
   https://github.com/fedora-cloud/Fedora-Dockerfiles
+
 
 * Instalação do ambiente
   + Instalação do Docker
@@ -28,10 +29,16 @@
   + Clonar este repositório        
     #+BEGIN_SRC sh :results output
       cd /home/$USER
-      git cl one https://github.com/wagnermarques/android_env.git
+      git clone https://github.com/wagnermarques/android_env.git
+      ls /home/$USER/android_env
     #+END_SRC    
 
     #+RESULTS:
+    : android-java-oracle-8-fed27
+    : java-oracle-8-f27-vnc
+    : README.org
+    : vnc
+
 
 * Criando a imagem dos containes
   Poderia ser um container só, mas é uma boa prática dividi-los
@@ -40,13 +47,197 @@
   gráfica, outra que adiciona o java 8 da oracle a partir desse
   ambiente sob esse último o container com o android studio.
 
-  + Criando as imagem do vnc
-    #+BEGIN_SRC 
-      cd /home/$USER/android_env/
-      cd 
+  A criação das imagens dos container devem ser na ordem correta, já
+  que a imagem do vnc é reutilizada pela do java 8 que, por sua vez, é
+  reutilizada pela imagem do android.
+
+  + Criando a imagem do vnc
+    #+BEGIN_SRC sh :results output
+      cd /home/$USER/android_env/vnc
+      ./docker-build.sh
     #+END_SRC
 
+    #+RESULTS:
+    #+begin_example
+    Sending build context to Docker daemon 10.75 kB
+    Step 1/14 : FROM docker.io/fedora:27
+     ---> 9110ae7f579f
+    Step 2/14 : MAINTAINER wagnerdocri@gmail.com
+     ---> Using cache
+     ---> b1eeaa8ead6f
+    Step 3/14 : RUN dnf -y update  &&     dnf -y install xorg-x11-twm                    tigervnc-server                    xterm                    dejavu-sans-fonts                     dejavu-serif-fonts                    xdotool &&     dnf clean all
+     ---> Using cache
+     ---> 0ae377d458f0
+    Step 4/14 : RUN mkdir -p /container_shared_folder
+     ---> Using cache
+     ---> 17fdaaaa3225
+    Step 5/14 : RUN chmod 777 -R /container_shared_folder #fix this
+     ---> Using cache
+     ---> 74f509ceb4a0
+    Step 6/14 : ADD ./scripts /scripts
+     ---> Using cache
+     ---> 7b27813bd35a
+    Step 7/14 : RUN chmod +x /scripts/*.sh
+     ---> Using cache
+     ---> d1ad2949e641
+    Step 8/14 : RUN mkdir /root/.vnc
+     ---> Using cache
+     ---> 0412e06318b4
+    Step 9/14 : ADD ./xstartup /root/.vnc/
+     ---> Using cache
+     ---> 665e4a157db0
+    Step 10/14 : RUN chmod -v +x /root/.vnc/xstartup
+     ---> Using cache
+     ---> ff2c78ba86f3
+    Step 11/14 : RUN echo admin123 | vncpasswd -f > /root/.vnc/passwd
+     ---> Using cache
+     ---> 3c5624590656
+    Step 12/14 : RUN chmod -v 600 /root/.vnc/passwd
+     ---> Using cache
+     ---> 18496f778750
+    Step 13/14 : EXPOSE 5901
+     ---> Using cache
+     ---> ae239b9e87ee
+    Step 14/14 : ENTRYPOINT /scripts/entrypoint.sh
+     ---> Using cache
+     ---> 16c29a44d4c8
+    Successfully built 16c29a44d4c8
+    #+end_example
 
+  + Criando a imagem do java 8
+    #+BEGIN_SRC sh :results output
+    cd /home/$USER/android_env/java-oracle-8-f27-vnc
+    ./docker-build.sh
+    #+END_SRC
+
+    #+RESULTS:
+    #+begin_example
+    Sending build context to Docker daemon 7.168 kB
+    Step 1/19 : FROM wagnermarques/fzl_vnc:0.0.1
+     ---> 16c29a44d4c8
+    Step 2/19 : MAINTAINER wagnerdocri@gmail.com
+     ---> Using cache
+     ---> 71c0f5ca33a9
+    Step 3/19 : ENV JDK_TARBALL jdk-8u131-linux-x64.tar.gz
+     ---> Using cache
+     ---> 0b2eefa26095
+    Step 4/19 : RUN dnf -y update
+     ---> Using cache
+     ---> 214f80b1a37b
+    Step 5/19 : RUN dnf -y install tar wget  && dnf clean all
+     ---> Using cache
+     ---> d62ef2abbf2f
+    Step 6/19 : RUN mkdir -p /opt/jdk
+     ---> Using cache
+     ---> ded38941202f
+    Step 7/19 : RUN wget --output-document /opt/jdk/$JDK_TARBALL  -e use_proxy=on -e http_proxy=$http_proxy -e https_proxy=$http_proxy           --no-cookies --no-check-certificate          --header "Cookie:s_nr=1484102101551; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz"
+     ---> Using cache
+     ---> 8214237279d2
+    Step 8/19 : RUN cd /opt/jdk && tar xvf $JDK_TARBALL
+     ---> Using cache
+     ---> 7525846c7c5e
+    Step 9/19 : ENV JAVA_HOME /opt/jdk/jdk1.8.0_131
+     ---> Using cache
+     ---> 9d53585cae77
+    Step 10/19 : ENV PATH $PATH:$JAVA_HOME/bin
+     ---> Using cache
+     ---> dbfc65e42dcf
+    Step 11/19 : RUN cd /opt/jdk && tar xvf $JDK_TARBALL
+     ---> Using cache
+     ---> 97919f68a519
+    Step 12/19 : RUN update-alternatives --install /usr/bin/java   java     $JAVA_HOME/bin/java 2000000
+     ---> Using cache
+     ---> 91e12e66a65e
+    Step 13/19 : RUN update-alternatives --install /usr/bin/javaws javaws   $JAVA_HOME/bin/javaws 2000000
+     ---> Using cache
+     ---> af5cef50fba2
+    Step 14/19 : RUN update-alternatives --install /usr/bin/javac  javac    $JAVA_HOME/bin/javac 2000000
+     ---> Using cache
+     ---> ef51bb64ff56
+    Step 15/19 : RUN update-alternatives --install /usr/bin/jar    jar      $JAVA_HOME/bin/jar 2000000
+     ---> Using cache
+     ---> b301194d36ff
+    Step 16/19 : RUN update-alternatives --set java $JAVA_HOME/bin/java
+     ---> Using cache
+     ---> f329c237d12f
+    Step 17/19 : RUN update-alternatives --set javaws $JAVA_HOME/bin/javaws
+     ---> Using cache
+     ---> d54bb9cab42f
+    Step 18/19 : RUN update-alternatives --set javac $JAVA_HOME/bin/javac
+     ---> Using cache
+     ---> 8ba2261faf86
+    Step 19/19 : RUN update-alternatives --set jar $JAVA_HOME/bin/jar
+     ---> Using cache
+     ---> 8be304443e3c
+    Successfully built 8be304443e3c
+    #+end_example
+
+  + Criando a imagem do android
+    #+BEGIN_SRC sh :results output
+    cd /home/$USER/android_env/android-java-oracle-8-fed27
+    ./docker-build.sh
+    #+END_SRC
+
+    #+RESULTS:
+
+* Rodando a imagem do android
+  #+BEGIN_SRC sh results:output
+    cd /home/$USER/android_env/android-java-oracle-8-fed27
+    ./docker-run.sh
+  #+END_SRC
+
+  #+RESULTS:
+  : Running... docker-run.sh <fzl_android> at host port <> and ip <192.168.33.155>.
+
+* Parando o container
+  #+BEGIN_SRC sh :results outpur
+  docker stop fzl_android
+  #+END_SRC
+  
+  #+RESULTS:
+  : fzl_android
+
+* Rodando o container novamente
+  Depois que foi dado o comadno ./docker-run.sh duas coisas
+  acontecem. Uma delas é o comando rodar, tudo bem, mas pro container
+  rodar, outra coisa tem que acontecer antes, que é a criação do
+  container propriamente dita. O container tem que existir pra ele
+  poder rodar e o comando docker run faz as duas coisas, cria o
+  container roda.
+  É possível para o container com docker stop, mostrado
+  anteriormente. O container estar parado não quer dizer que elei
+  deixou de existir. Quer dizer que ele existe mas está parado. 
+
+  O comando abaixo mostra os containers que existem e o estado de cada um
+  #+BEGIN_SRC sh :results output
+  docker ps -a
+  #+END_SRC
+
+  O comando docker ps -a mostra o container chamado fzl_android com
+  estatus de Exited (137) About a minute ago                            
+  #+RESULTS:
+  #+begin_example
+  CONTAINER ID        IMAGE                                                     COMMAND                  CREATED             STATUS                            PORTS                    NAMES
+  5e864b68b0ea        wagnermarques/fzl_android-java-oracle-8-fed27-vnc:0.0.1   "/scripts/entrypoi..."   4 minutes ago       Exited (137) About a minute ago                            fzl_android
+
+  #+end_example
+
+  Pra rodar um container que já existe não precisa dar o docker run de
+  novo. Basta fazer o seguinte...
+
+  #+BEGIN_SRC sh
+    docker start fzl_android
+  #+END_SRC
+
+  #+RESULTS:
+  : fzl_android
+  
+  Agora,  um docker ps -a vais mostrar o container com status de "up"
+
+
+* Utilizando o container
+  
+  
 * Referencias
 [fn:installdocker]  https://docs.docker.com/install/linux/docker-ce/fedora/#set-up-the-repository
 [fn:installgit] https://git-scm.com/book/en/v2/Getting-Started-Installing-Git

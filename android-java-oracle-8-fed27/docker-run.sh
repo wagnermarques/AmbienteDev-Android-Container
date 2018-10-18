@@ -9,6 +9,7 @@ echo "Running... docker-run.sh <$CONTAINER_NAME> at host port <$HOST_PORT> and i
 
 mkdir -p $(pwd)/../android-java-oracle-8-fed27-shared-dir/$CONTAINER_NAME #data dir is for each respective container name
 DATADIR=$(pwd)/../android-java-oracle-8-fed27-shared-dir/$CONTAINER_NAME
+ANDROID_PROJECTS_DIR=$(pwd)/../android_projects
 
 docker run \
        --name  $CONTAINER_NAME -h $CONTAINER_NAME  -d -p $HOST_PORT_MAPPING \

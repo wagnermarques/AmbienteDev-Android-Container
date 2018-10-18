@@ -32,7 +32,7 @@ ENV GRADLE_UNZIPED_FOLDER_NAME=gradle-4.5-rc-1
 ENV GRADLE_HOME=/opt/gradle
 
 #if you are not behind a proxy, comments this out
-RUN cp /container_config_folder/.wgetrc  ~/
+#RUN cp /container_config_folder/.wgetrc  ~/
 
 #if you are not behind a proxy, comments this out
 #RUN wget --output-document /opt/$GRADLE_ZIP_FILE_NAME -e use_proxy=$use_proxy -e http_proxy=$http_proxy -e https_proxy=$http_proxy $GRADLE_DOWNLOAD_URL
@@ -92,7 +92,6 @@ RUN cp -r $ANDROID_SDK_r25_HOME/tools $ANDROID_SDK_r38_HOME
 
 
 #from: https://github.com/kelvinlawson/dockerfile-android-studio/blob/master/Dockerfile
-
 RUN wget --output-document /opt/androidstudio.zip https://dl.google.com/dl/android/studio/ide-zips/3.0.1.0/android-studio-ide-171.4443003-linux.zip?hl=pt-br
 RUN unzip /opt/androidstudio.zip -d /opt
 RUN ls -l /opt
