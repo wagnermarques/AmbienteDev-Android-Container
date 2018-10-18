@@ -1,13 +1,13 @@
-* ApresentaÁ„o do Projeto
-  O objetivo deste repostiÛrio È criar um container para programaÁ„o de aplicativos
-  android prÈ-configurado com ferramentas de testes.
-  Todos os Dockerfiles s„o ou inpirados ou forks do projeto
+* Apresenta√ß√£o do Projeto
+  O objetivo deste reposti√≥rio √© criar um container para programa√ß√£o de aplicativos
+  android pr√©-configurado com ferramentas de testes.
+  Todos os Dockerfiles s√£o ou inspirados ou forks do projeto
   https://github.com/fedora-cloud/Fedora-Dockerfiles
 
 
-* InstalaÁ„o do ambiente
-  + InstalaÁ„o do Docker
-     Ser· necess·rio primeiro instalar o docker[fn:installdocker]
+* Instala√ß√£o do ambiente
+  + Instala√ß√£o do Docker
+     Ser√° necess√°rio primeiro instalar o docker[fn:installdocker]
      
      #+BEGIN_SRC sh :results output
      docker -v
@@ -16,8 +16,8 @@
      #+RESULTS:
      : Docker version 1.13.1, build 9c9378f-unsupported
      
-  + InstalaÁ„o do git
-    Consulte esta documentaÁ„o para instalaÁ„o do git[fn:installgit]
+  + Instala√ß√£o do git
+    Consulte esta documenta√ß√£o para instala√ß√£o do git[fn:installgit]
 
     #+BEGIN_SRC sh
     git --version
@@ -26,7 +26,7 @@
     #+RESULTS:
     : git version 2.14.4
     
-  + Clonar este repositÛrio        
+  + Clonar este reposit√≥rio        
     #+BEGIN_SRC sh :results output
       cd /home/$USER
       git clone https://github.com/wagnermarques/android_env.git
@@ -41,14 +41,14 @@
 
 
 * Criando a imagem dos containes
-  Poderia ser um container sÛ, mas È uma boa pr·tica dividi-los
+  Poderia ser um container s√≥, mas √© uma boa pr√°tica dividi-los
   fazendo um ambiente herdar do outro.
   Por exemplo, tem um Dockerfile que cria uma imagem com interface
-  gr·fica, outra que adiciona o java 8 da oracle a partir desse
-  ambiente sob esse ˙ltimo o container com o android studio.
+  gr√°fica, outra que adiciona o java 8 da oracle a partir desse
+  ambiente sob esse √∫ltimo o container com o android studio.
 
-  A criaÁ„o das imagens dos container devem ser na ordem correta, j·
-  que a imagem do vnc È reutilizada pela do java 8 que, por sua vez, È
+  A cria√ß√£o das imagens dos container devem ser na ordem correta, j√°
+  que a imagem do vnc √© reutilizada pela do java 8 que, por sua vez, √©
   reutilizada pela imagem do android.
 
   + Criando a imagem do vnc
@@ -59,7 +59,8 @@
 
     #+RESULTS:
     #+begin_example
-    Sending build context to Docker daemon 10.75 kB
+    Sending build context to Docker daemon 10.75 kB
+
     Step 1/14 : FROM docker.io/fedora:27
      ---> 9110ae7f579f
     Step 2/14 : MAINTAINER wagnerdocri@gmail.com
@@ -112,7 +113,8 @@
 
     #+RESULTS:
     #+begin_example
-    Sending build context to Docker daemon 7.168 kB
+    Sending build context to Docker daemon 7.168 kB
+
     Step 1/19 : FROM wagnermarques/fzl_vnc:0.0.1
      ---> 16c29a44d4c8
     Step 2/19 : MAINTAINER wagnerdocri@gmail.com
@@ -199,14 +201,14 @@
 
 * Rodando o container novamente
   Depois que foi dado o comadno ./docker-run.sh duas coisas
-  acontecem. Uma delas È o comando rodar, tudo bem, mas pro container
-  rodar, outra coisa tem que acontecer antes, que È a criaÁ„o do
+  acontecem. Uma delas √© o comando rodar, tudo bem, mas pro container
+  rodar, outra coisa tem que acontecer antes, que √© a cria√ß√£o do
   container propriamente dita. O container tem que existir pra ele
   poder rodar e o comando docker run faz as duas coisas, cria o
   container roda.
-  … possÌvel para o container com docker stop, mostrado
-  anteriormente. O container estar parado n„o quer dizer que elei
-  deixou de existir. Quer dizer que ele existe mas est· parado. 
+  √â poss√≠vel para o container com docker stop, mostrado
+  anteriormente. O container estar parado n√£o quer dizer que elei
+  deixou de existir. Quer dizer que ele existe mas est√° parado. 
 
   O comando abaixo mostra os containers que existem e o estado de cada um
   #+BEGIN_SRC sh :results output
@@ -222,7 +224,7 @@
 
   #+end_example
 
-  Pra rodar um container que j· existe n„o precisa dar o docker run de
+  Pra rodar um container que j√° existe n√£o precisa dar o docker run de
   novo. Basta fazer o seguinte...
 
   #+BEGIN_SRC sh
